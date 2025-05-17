@@ -106,6 +106,7 @@ async def adding_income_confirmation_handler(message: types.Message, state: FSMC
         try:
             db_manager.add_transaction(telegram_id, 'income', amount, category_name_to_save)
             await message.answer(f"✅ Доход {amount:.2f} в категории '{category_name_to_save}' успешно добавлен.")
+        
         except Exception as e:
             await message.answer("❌ Произошла ошибка при сохранении дохода в базу данных.")
     
