@@ -32,5 +32,16 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users (id)
         );
     ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS financial_goals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            description TEXT NOT NULL,
+            target_amount REAL NOT NULL,
+            current_amount REAL NOT NULL DEFAULT 0.0,
+            status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'achieved', 'cancelled')),
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        );
+    ''')
     connection.commit()
     connection.close()
