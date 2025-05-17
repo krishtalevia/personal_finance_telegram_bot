@@ -8,7 +8,6 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             id              INTEGER PRIMARY KEY AUTOINCREMENT,
             telegram_id     INTEGER UNIQUE NOT NULL,
-            username        TEXT,
             is_authorized   BOOLEAN DEFAULT 0
         );
     ''')
