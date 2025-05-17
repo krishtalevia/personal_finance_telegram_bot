@@ -91,3 +91,12 @@ async def statistics_handler(message: types.Message):
                 total_expense += tr_amount
     
     net_balance = total_income - total_expense
+
+    response_lines = [
+        f"📊 Статистика за период: {period_display_name} ({period_start_str} - {period_end_str})\n",
+        f"🟢 Общий доход: {total_income:.2f}",
+        f"🔴 Общий расход: {total_expense:.2f}",
+        f"⚖️ Чистый баланс: {net_balance:.2f}"
+    ]
+
+    await message.answer("\n".join(response_lines))
