@@ -78,3 +78,10 @@ class DatabaseManager:
         self.cursor.execute('UPDATE users SET is_authorized = 1 WHERE telegram_id = ?', (telegram_id,))
         self.connection.commit()
         return True
+
+    def is_user_authorized(self, telegram_id):
+        self.cursor.execute('SELECT is_authorized FROM users WHERE telegram_id = ?', (telegram_id,))
+        result = self.cursor.fetchone()
+        if result is None:
+            raise ValueError('Пользователь не найден.')
+        return result[0] == 1
