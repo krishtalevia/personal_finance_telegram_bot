@@ -94,7 +94,7 @@ class DatabaseManager:
         else:
             raise ValueError('Пользователь не авторизован.')
         
-    def _get_user_internal_id(self, telegram_id):
+    def get_user_id_by_telegram_id(self, telegram_id):
         self.cursor.execute('SELECT id FROM users WHERE telegram_id = ?', (telegram_id,))
         user_id = self.cursor.fetchone()
         if user_id:
