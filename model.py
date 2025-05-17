@@ -21,5 +21,16 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users (id)
         );
     ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS transactions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            type TEXT NOT NULL CHECK(type IN ('income', 'expense')),
+            amount REAL NOT NULL,
+            category_name TEXT NOT NULL, 
+            transaction_date TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        );
+    ''')
     connection.commit()
     connection.close()
