@@ -83,3 +83,41 @@ async def view_transactions_handler(message: types.Message):
     except Exception as e:
         await message.answer("❌ Произошла ошибка при получении транзакций из базы данных.")
         return
+    
+    if not transactions:
+        response_text = "🤷‍♂️ За указанный период"
+        if category_name_filter:
+            response_text += f" по категории '{category_name_filter}'"
+        response_text += " транзакций не найдено."
+        await message.answer(response_text)
+        return
+
+    response_lines = []
+    total_income = 0.0
+    total_expense = 0.0
+
+    header = f"📜 Транзакции c {period_start_str} по {period_end_str}"
+    if category_name_filter:
+        header += f"\nКатегория: {category_name_filter}"
+    response_lines.append(header + "\n")
+
+    for tr in transactions:
+
+        tr_id, tr_type, tr_amount, tr_category, tr_date_str = tr[0], tr[1], tr[2], tr[3], tr[4]
+        
+        try:
+            dt_obj = datetime.datetime.strptime(tr_date_str, '%Y-%m-%d %H:%M:%S')
+            formatted_date = dt_obj.strftime('%Y-%m-%d %H:%M')
+        except ValueError:
+            formatted_date = tr_date_str
+
+        line = ""
+        if tr_type == 'income':
+            line += "🟢 Доход: "
+            total_income += tr_amount
+        elif tr_type == 'expense':
+            line += "🔴 Расход: "
+            total_expense += tr_amount
+        
+        line += f"{tr_amount:.2f} | Категория: {tr_category} | Дата: {formatted_date}"
+        response_lines.append(line)
