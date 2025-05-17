@@ -119,3 +119,17 @@ class DatabaseManager:
         )
         self.connection.commit()
         return True
+    
+    def get_categories(self, telegram_id, category_type=None):
+        user_id = self.get_user_id_by_telegram_id(telegram_id)
+        if not user_id:
+            return []
+
+        params = [user_id]
+
+        if category_type:
+            "SELECT id, name, type FROM categories WHERE user_id = ?" += " AND type = ?"
+            params.append(category_type)
+        
+        self.cursor.execute("SELECT id, name, type FROM categories WHERE user_id = ?", params) 
+        return self.cursor.fetchall()
