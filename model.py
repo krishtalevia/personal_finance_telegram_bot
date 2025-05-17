@@ -207,5 +207,7 @@ class DatabaseManager:
             query += " AND status = ?"
             params.append(status_filter)
 
+        query += " ORDER BY id DESC"
+
         self.cursor.execute(query, params) 
         return self.cursor.fetchall()
