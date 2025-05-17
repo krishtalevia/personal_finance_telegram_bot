@@ -121,3 +121,13 @@ async def view_transactions_handler(message: types.Message):
         
         line += f"{tr_amount:.2f} | Категория: {tr_category} | Дата: {formatted_date}"
         response_lines.append(line)
+
+    response_lines.append("\n📊 Итоги за период:")
+    response_lines.append(f"   Общий доход: {total_income:.2f}")
+    response_lines.append(f"   Общий расход: {total_expense:.2f}")
+    net_balance = total_income - total_expense
+    response_lines.append(f"   Чистый баланс: {net_balance:.2f}")
+
+    full_response = "\n".join(response_lines)
+    
+    await message.answer(full_response)
