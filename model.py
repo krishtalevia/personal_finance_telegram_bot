@@ -50,4 +50,6 @@ if __name__ == '__main__':
     init_db()
 
 class DatabaseManager:
-    pass
+    def __init__(self, db_name='database.db'):
+        self.connection = sqlite3.connect(db_name)
+        self.cursor = self.connection.cursor()
