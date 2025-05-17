@@ -92,3 +92,28 @@ async def adding_income_category_handler(message: types.Message, state: FSMConte
         f"Добавить эту запись? (Да/Нет)"
     )
     await state.set_state(AddIncomeStates.Confirmation)
+
+@router.message(StateFilter(AddIncomeStates.Confirmation))
+async def adding_income_confirmation_handler(message: types.Message, state: FSMContext):
+    user_choice = message.text.strip().lower()
+    telegram_id = message.from_user.id
+
+    if user_choice == 'да':
+        data = await state.get_data()
+        amount = data['amount']
+        category_name_to_save = data['category_name_processed'] 
+        
+        try:
+            db_manager.add_transaction(telegram_id, 'income', amount, category_name_to_save)
+            await message.answer(f"✅ Доход {amount:.2f} в категории '{category_name_to_save}' успешно добавлен.")
+        except Exception as e:
+            await message.answer("❌ Произошла ошибка при сохранении дохода в базу данных.")
+    
+    elif user_choice == 'нет':
+        await message.answer("❌ Добавление дохода отменено.")
+    
+    else:
+        await message.answer("⚠️ Пожалуйста, ответьте 'Да' или 'Нет'.")
+        return
+
+    await state.clear()
