@@ -54,3 +54,7 @@ class DatabaseManager:
         self.connection = sqlite3.connect(db_name)
         self.cursor = self.connection.cursor()
         self.connection.commit()
+
+    def get_user(self, telegram_id):
+        self.cursor.execute('SELECT * FROM users WHERE telegram_id = ?', (telegram_id,))
+        return self.cursor.fetchone()
