@@ -100,3 +100,22 @@ class DatabaseManager:
         if user_id:
             return user_id[0]
         return None
+    
+    def add_category(self, telegram_id, name, type):
+        user_id = self.get_user_id_by_telegram_id(telegram_id)
+        if not user_id:
+            raise ValueError("Пользователь для добавления категории не найден.")
+
+        self.cursor.execute(
+            "SELECT id FROM categories WHERE user_id = ? AND name = ? AND type = ?",
+            (user_id, name, type)
+        )
+        if self.cursor.fetchone():
+            raise ValueError(f"Категория '{name}' ({type}) уже существует для этого пользователя.")
+
+        self.cursor.execute(
+            "INSERT INTO categories (user_id, name, type) VALUES (?, ?, ?)",
+            (user_id, name, type)
+        )
+        self.connection.commit()
+        return True
