@@ -71,8 +71,8 @@ async def statistics_handler(message: types.Message):
             telegram_id, 
             period_start_str=period_start_str, 
             period_end_str=period_end_str
-            
         )
+
     except Exception as e:
         await message.answer("❌ Произошла ошибка при получении транзакций для статистики.")
         return
