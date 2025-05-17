@@ -50,3 +50,7 @@ async def set_financial_goal_handler(message: types.Message):
     except ValueError:
         await message.answer("⚠️ Некорректная сумма цели. Введите число.")
         return
+    
+    if not description:
+        await message.answer("⚠️ Описание цели не может быть пустым.")
+        return
