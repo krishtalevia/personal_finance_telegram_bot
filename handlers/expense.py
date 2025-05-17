@@ -28,3 +28,19 @@ async def add_expense_start_handler(message: types.Message, state: FSMContext):
     
     await message.answer("💸 Введите сумму расхода:")
     await state.set_state(AddExpenseStates.AddingAmount)
+
+@router.message(StateFilter(AddExpenseStates.AddingAmount))
+async def adding_expense_amount_handler(message: types.Message, state: FSMContext):
+    amount_str = message.text.strip()
+    try:
+        amount = float(amount_str)
+        if amount <= 0:
+            await message.answer("⚠️ Сумма должна быть положительным числом. Повторите ввод.")
+            return
+        
+        await state.update_data(amount=amount)
+        await message.answer("🏷️ Введите категорию расхода (например, Еда, Транспорт):")
+        await state.set_state(AddExpenseStates.AddingCategory)
+        
+    except ValueError:
+        await message.answer("⚠️ Некорректная сумма. Введите число больше нуля. Повторите ввод.")
