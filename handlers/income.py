@@ -7,3 +7,8 @@ from model import DatabaseManager
 
 router = Router()
 db_manager = DatabaseManager()
+
+class AddIncomeStates(StatesGroup):
+    AddingAmount = State()
+    AddingCategory = State()
+    Confirmation = State()
