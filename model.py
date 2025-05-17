@@ -238,3 +238,15 @@ class DatabaseManager:
         )
         self.connection.commit()
         return True
+    
+    def delete_financial_goal(self, goal_id, telegram_id):
+        user_id = self.get_user_id_by_telegram_id(telegram_id)
+        if not user_id:
+            raise ValueError("Пользователь для удаления цели не найден.")
+        
+        self.cursor.execute(
+            "DELETE FROM financial_goals WHERE id = ? AND user_id = ?",
+            [goal_id, user_id]
+        )
+        self.connection.commit()
+        return True
