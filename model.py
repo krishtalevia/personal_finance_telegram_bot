@@ -58,3 +58,10 @@ class DatabaseManager:
     def get_user(self, telegram_id):
         self.cursor.execute('SELECT * FROM users WHERE telegram_id = ?', (telegram_id,))
         return self.cursor.fetchone()
+    
+    def register_user(self, telegram_id):
+        if self.get_user(telegram_id):
+            raise ValueError('Пользователь уже существует!')
+        self.cursor.execute('INSERT INTO users (telegram_id, is_authorized) VALUES (?, ?)', (telegram_id, 0))
+        self.connection.commit()
+        return True
