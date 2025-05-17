@@ -28,3 +28,20 @@ async def add_income_start_handler(message: types.Message, state: FSMContext):
     
     await message.answer("💰 Введите сумму дохода:")
     await state.set_state(AddIncomeStates.AddingAmount)
+
+@router.message(StateFilter(AddIncomeStates.AddingAmount))
+async def adding_income_amount_handler(message: types.Message, state: FSMContext):
+    amount_str = message.text.strip()
+    try:
+        amount = float(amount_str)
+        if amount <= 0:
+
+            await message.answer("⚠️ Сумма должна быть положительным числом. Повторите ввод.")
+            return 
+        
+        await state.update_data(amount=amount)
+        await message.answer("🏷️ Введите категорию дохода (например, Зарплата, Подарок):")
+        await state.set_state(AddIncomeStates.AddingCategory)
+        
+    except ValueError:
+        await message.answer("⚠️ Некорректная сумма. Введите число больше нуля. Повторите ввод.")
