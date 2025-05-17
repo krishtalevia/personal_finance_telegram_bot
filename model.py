@@ -222,3 +222,19 @@ class DatabaseManager:
             [goal_id, user_id]
         )
         return self.cursor.fetchone()
+    
+    def update_goal_parameter(self, goal_id, telegram_id, parameter_name, new_value):
+        user_id = self.get_user_id_by_telegram_id(telegram_id)
+        if not user_id:
+            raise ValueError("Пользователь для обновления цели не найден.")
+
+        allowed_parameters = ['description', 'target_amount', 'current_amount', 'status']
+        if parameter_name not in allowed_parameters:
+            raise ValueError(f"Параметр '{parameter_name}' не может быть обновлен.")
+
+        self.cursor.execute(
+            f"UPDATE financial_goals SET {parameter_name} = ? WHERE id = ? AND user_id = ?",
+            [new_value, goal_id, user_id]
+        )
+        self.connection.commit()
+        return True
