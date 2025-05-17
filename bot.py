@@ -3,7 +3,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 
 from config import TOKEN
-from handlers import auth, start
+from handlers import auth, start, income, expense
 from model import init_db
 
 async def main():
