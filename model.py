@@ -133,3 +133,17 @@ class DatabaseManager:
         
         self.cursor.execute("SELECT id, name, type FROM categories WHERE user_id = ?", params) 
         return self.cursor.fetchall()
+    
+    def add_transaction(self, telegram_id, type, amount, category_name):
+        user_id = self.get_user_id_by_telegram_id(telegram_id)
+        if not user_id:
+            raise ValueError("Пользователь для добавления транзакции не найден.")
+
+        transaction_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        self.cursor.execute(
+            "INSERT INTO transactions (user_id, type, amount, category_name, transaction_date) VALUES (?, ?, ?, ?, ?)",
+            [user_id, type, amount, category_name, transaction_date]
+        )
+        self.connection.commit()
+        return True 
