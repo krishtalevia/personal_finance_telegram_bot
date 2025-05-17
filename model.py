@@ -12,5 +12,14 @@ def init_db():
             is_authorized   BOOLEAN DEFAULT 0
         );
     ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS categories (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            type TEXT NOT NULL CHECK(type IN ('income', 'expense')),
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        );
+    ''')
     connection.commit()
     connection.close()
