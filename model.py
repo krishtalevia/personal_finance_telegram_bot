@@ -125,13 +125,14 @@ class DatabaseManager:
         if not user_id:
             return []
 
+        query = "SELECT id, name, type FROM categories WHERE user_id = ?"
         params = [user_id]
 
         if category_type:
-            "SELECT id, name, type FROM categories WHERE user_id = ?" += " AND type = ?"
+            query += " AND type = ?"
             params.append(category_type)
         
-        self.cursor.execute("SELECT id, name, type FROM categories WHERE user_id = ?", params) 
+        self.cursor.execute(query, params)
         return self.cursor.fetchall()
     
     def add_transaction(self, telegram_id, type, amount, category_name):
