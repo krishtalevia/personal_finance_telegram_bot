@@ -65,3 +65,14 @@ async def statistics_handler(message: types.Message):
     if not period_start_str or not period_end_str:
         await message.answer("⚠️ Не удалось определить период для статистики.")
         return
+    
+    try:
+        transactions = db_manager.get_transactions(
+            telegram_id, 
+            period_start_str=period_start_str, 
+            period_end_str=period_end_str
+            
+        )
+    except Exception as e:
+        await message.answer("❌ Произошла ошибка при получении транзакций для статистики.")
+        return
