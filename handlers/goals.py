@@ -41,3 +41,12 @@ async def set_financial_goal_handler(message: types.Message):
 
     amount_str = args_list[0]
     description = args_list[1].strip()
+
+    try:
+        target_amount = float(amount_str)
+        if target_amount <= 0:
+            await message.answer("⚠️ Сумма цели должна быть положительным числом.")
+            return
+    except ValueError:
+        await message.answer("⚠️ Некорректная сумма цели. Введите число.")
+        return
