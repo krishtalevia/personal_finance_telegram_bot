@@ -4,3 +4,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 
 from model import DatabaseManager
+
+router = Router()
+db_manager = DatabaseManager()
