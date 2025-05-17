@@ -85,3 +85,11 @@ class DatabaseManager:
         if result is None:
             raise ValueError('Пользователь не найден.')
         return result[0] == 1
+    
+    def logout_user(self, telegram_id):
+        if self.is_user_authorized(telegram_id):
+            self.cursor.execute('UPDATE users SET is_authorized = 0 WHERE telegram_id = ?', (telegram_id,))
+            self.connection.commit()
+            return True
+        else:
+            raise ValueError('Пользователь не авторизован.')
