@@ -31,3 +31,7 @@ def get_date_range_for_period(period_keyword):
     if period_start:
         return period_start.strftime('%Y-%m-%d'), period_end.strftime('%Y-%m-%d')
     return None, None
+
+@router.message(Command('statistics'))
+async def statistics_handler(message: types.Message):
+    pass
