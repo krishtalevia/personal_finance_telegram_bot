@@ -193,4 +193,19 @@ class DatabaseManager:
             [user_id, description, target_amount]
         )
         self.connection.commit()
-        return True 
+        return True
+    
+    def get_financial_goals(self, telegram_id, status_filter=None):
+        user_id = self.get_user_id_by_telegram_id(telegram_id)
+        if not user_id:
+            return []
+
+        query = "SELECT id, description, target_amount, current_amount, status FROM financial_goals WHERE user_id = ?"
+        params = [user_id]
+
+        if status_filter:
+            query += " AND status = ?"
+            params.append(status_filter)
+
+        self.cursor.execute(query, params) 
+        return self.cursor.fetchall()
