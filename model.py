@@ -211,3 +211,14 @@ class DatabaseManager:
 
         self.cursor.execute(query, params) 
         return self.cursor.fetchall()
+    
+    def get_financial_goal_by_id(self, goal_id, telegram_id):
+        user_id = self.get_user_id_by_telegram_id(telegram_id)
+        if not user_id:
+            return None 
+        
+        self.cursor.execute(
+            "SELECT id, description, target_amount, current_amount, status FROM financial_goals WHERE id = ? AND user_id = ?",
+            [goal_id, user_id]
+        )
+        return self.cursor.fetchone()
