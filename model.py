@@ -64,3 +64,17 @@ class DatabaseManager:
         self.cursor.execute('INSERT INTO users (telegram_id, is_authorized) VALUES (?, ?)', (telegram_id, 0))
         self.connection.commit()
         return True
+    
+    def authorize_user(self, telegram_id):
+        self.cursor.execute('SELECT is_authorized FROM users WHERE telegram_id = ?', (telegram_id,))
+        result = self.cursor.fetchone()
+
+        if result is None:
+            raise ValueError('Пользователь не зарегистрирован.')
+        
+        if result[0] == 1:
+            raise ValueError('Пользователь уже авторизован.')
+
+        self.cursor.execute('UPDATE users SET is_authorized = 1 WHERE telegram_id = ?', (telegram_id,))
+        self.connection.commit()
+        return True
