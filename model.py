@@ -147,3 +147,38 @@ class DatabaseManager:
         )
         self.connection.commit()
         return True 
+    
+    def get_transactions(self, telegram_id, period_start_str=None, period_end_str=None, category_name_filter=None, transaction_type_filter=None):
+        user_id = self.get_user_id_by_telegram_id(telegram_id)
+        if not user_id:
+            return []
+
+        query = "SELECT id, type, amount, category_name, transaction_date FROM transactions WHERE user_id = ?"
+        params = [user_id]
+
+        if period_start_str:
+            start_dt = period_start_str
+            if len(period_start_str) == 10:
+                start_dt += " 00:00:00"
+            query += " AND transaction_date >= ?"
+            params.append(start_dt)
+        
+        if period_end_str:
+            end_dt = period_end_str
+            if len(period_end_str) == 10:
+                end_dt += " 23:59:59"
+            query += " AND transaction_date <= ?"
+            params.append(end_dt)
+
+        if category_name_filter:
+            query += " AND category_name = ?"
+            params.append(category_name_filter)
+        
+        if transaction_type_filter:
+            query += " AND type = ?"
+            params.append(transaction_type_filter)
+            
+        query += " ORDER BY transaction_date DESC"
+
+        self.cursor.execute(query, params)
+        return self.cursor.fetchall()
