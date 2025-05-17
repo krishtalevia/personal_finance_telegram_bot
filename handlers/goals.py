@@ -54,3 +54,18 @@ async def set_financial_goal_handler(message: types.Message):
     if not description:
         await message.answer("⚠️ Описание цели не может быть пустым.")
         return
+    
+    try:
+        if db_manager.add_financial_goal(telegram_id, description, target_amount):
+            await message.answer(
+                f"🎯 Новая финансовая цель установлена:\n"
+                f"Описание: {description}\n"
+                f"Сумма: {target_amount:.2f}"
+            )
+
+    except ValueError as ve:
+        await message.answer(f"❌ Ошибка при установке цели: {ve}")
+    
+    except Exception as e:
+        await message.answer("❌ Произошла ошибка при сохранении финансовой цели в базу данных.")
+        return
