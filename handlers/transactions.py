@@ -13,3 +13,21 @@ PERIODS = {
     "месяц": "month",
     "год": "year",
 }
+
+def get_date_range_for_period(period_keyword):
+    today = datetime.date.today()
+    period_start = None
+    period_end = today
+
+    if period_keyword == "day":
+        period_start = today
+    elif period_keyword == "week":
+        period_start = today - datetime.timedelta(days=today.weekday())
+    elif period_keyword == "month":
+        period_start = today.replace(day=1)
+    elif period_keyword == "year":
+        period_start = today.replace(month=1, day=1)
+    
+    if period_start:
+        return period_start.strftime('%Y-%m-%d'), period_end.strftime('%Y-%m-%d')
+    return None, None
