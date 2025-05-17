@@ -182,3 +182,15 @@ class DatabaseManager:
 
         self.cursor.execute(query, params)
         return self.cursor.fetchall()
+    
+    def add_financial_goal(self, telegram_id, description, target_amount):
+        user_id = self.get_user_id_by_telegram_id(telegram_id)
+        if not user_id:
+            raise ValueError("Пользователь для добавления финансовой цели не найден.")
+
+        self.cursor.execute(
+            "INSERT INTO financial_goals (user_id, description, target_amount) VALUES (?, ?, ?)",
+            [user_id, description, target_amount]
+        )
+        self.connection.commit()
+        return True 
