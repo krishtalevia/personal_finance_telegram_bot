@@ -76,3 +76,18 @@ async def statistics_handler(message: types.Message):
     except Exception as e:
         await message.answer("❌ Произошла ошибка при получении транзакций для статистики.")
         return
+    
+    total_income = 0.0
+    total_expense = 0.0
+
+    if transactions:
+        for tr in transactions:
+            tr_type = tr[1] 
+            tr_amount = tr[2]
+            
+            if tr_type == 'income':
+                total_income += tr_amount
+            elif tr_type == 'expense':
+                total_expense += tr_amount
+    
+    net_balance = total_income - total_expense
