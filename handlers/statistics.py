@@ -44,3 +44,24 @@ async def statistics_handler(message: types.Message):
     if not db_manager.is_user_authorized(telegram_id):
         await message.answer('❌ Вы не авторизованы. Используйте команду /login для авторизации.')
         return
+    
+    args_str = message.get_args()
+    args_list = args_str.split() if args_str else []
+
+    period_keyword_from_user = "month"
+    period_display_name = "Текущий месяц"
+
+    if args_list:
+        potential_period_arg = args_list[0].lower()
+        if potential_period_arg in PERIODS:
+            period_keyword_from_user = PERIODS[potential_period_arg]
+            for display, keyword_val in PERIODS.items():
+                if keyword_val == period_keyword_from_user:
+                    period_display_name = display.capitalize()
+                    break
+
+    period_start_str, period_end_str = get_date_range_for_period(period_keyword_from_user)
+
+    if not period_start_str or not period_end_str:
+        await message.answer("⚠️ Не удалось определить период для статистики.")
+        return
