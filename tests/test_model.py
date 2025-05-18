@@ -75,3 +75,23 @@ def test_view_transactions_non_existing_category(db_manager):
     transactions = db_manager.get_transactions(telegram_id, category_name_filter="Несуществующая Категория")
     assert isinstance(transactions, list)
     assert len(transactions) == 0
+
+# Тестовый случай 3.1: Установка новой финансовой цели.
+def test_set_new_financial_goal(db_manager):
+    telegram_id = 12345
+    db_manager.register_user(telegram_id)
+
+    description = "Накопить на отпуск"
+    target_amount = 100000.00
+    
+    result = db_manager.add_financial_goal(telegram_id, description, target_amount)
+    assert result is True
+
+    goals = db_manager.get_financial_goals(telegram_id)
+    assert len(goals) == 1
+    goal = goals[0]
+    
+    assert goal[1] == description
+    assert goal[2] == target_amount
+    assert goal[3] == 0.0
+    assert goal[4] == 'active'
