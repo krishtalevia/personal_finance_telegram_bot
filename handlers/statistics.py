@@ -133,4 +133,31 @@ async def statistics_handler(message: types.Message):
             "🤷 Транзакций за указанный период не найдено."
         ]
 
+    try:
+        active_goals = db_manager.get_financial_goals(telegram_id, status='active')
+        if active_goals:
+            response_lines.append("\n🎯 Прогресс по активным финансовым целям:")
+            for goal in active_goals:
+        
+                goal_desc = goal[1]
+                goal_target = goal[2]
+                goal_current = goal[3]
+
+                progress_percent = 0.0
+                if goal_target > 0:
+                    progress_percent = (goal_current / goal_target) * 100.0
+                
+                progress_percent = min(progress_percent, 100.0) 
+
+                line = f"  - {goal_desc}: {goal_current:.2f} / {goal_target:.2f} ({progress_percent:.1f}%)"
+                if goal_current >= goal_target:
+                    line += " ✅ Цель достигнута!"
+                response_lines.append(line)
+            else: 
+                response_lines.append("\n🎯 Активных финансовых целей нет.")
+
+    except Exception as e_goals:
+        response_lines.append("\n⚠️ Не удалось загрузить информацию о финансовых целях.")
+
+    
     await message.answer("\n".join(response_lines))
