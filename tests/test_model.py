@@ -140,3 +140,21 @@ def test_get_transactions_for_current_month(db_manager):
     today_str = datetime.date.today().strftime('%Y-%m-%d')
     transactions = db_manager.get_transactions(telegram_id, period_start_str=today_str, period_end_str=today_str)
     assert len(transactions) >= 1
+
+# Тестовый случай 4.2: Запрос аналитики по категориям расходов.
+def test_get_transactions_filtered_by_category(db_manager):
+    telegram_id = 12345
+    db_manager.register_user(telegram_id)
+
+    db_manager.add_transaction(telegram_id, "expense", 20, "Еда")
+    db_manager.add_transaction(telegram_id, "expense", 100, "Транспорт")
+    db_manager.add_transaction(telegram_id, "expense", 10, "Еда")
+
+    food_transactions = db_manager.get_transactions(telegram_id, category_name_filter="Еда", transaction_type_filter="expense")
+    assert len(food_transactions) == 2
+    for tr in food_transactions:
+        assert tr[3] == "Еда"
+
+    transport_transactions = db_manager.get_transactions(telegram_id, category_name_filter="Транспорт")
+    assert len(transport_transactions) == 1
+    assert transport_transactions[0][3] == "Транспорт"
