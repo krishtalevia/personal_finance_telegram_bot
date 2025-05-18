@@ -25,3 +25,15 @@ def test_register_existing_user(db_manager):
 
     with pytest.raises(ValueError, match='Пользователь уже существует!'):
         db_manager.register_user(telegram_id)
+
+# Тестовый случай 1.2: Успешная регистрация нового пользователя.
+def test_register_new_user(db_manager):
+    telegram_id = 11111
+    
+    result = db_manager.register_user(telegram_id)
+    assert result is True
+    
+    user_data = db_manager.get_user(telegram_id)
+    assert user_data is not None
+    assert user_data[1] == telegram_id
+    assert user_data[2] == 0
