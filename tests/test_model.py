@@ -1,7 +1,7 @@
 import pytest
 import os
 from model import DatabaseManager, init_db
-from datetime import datetime
+from datetime import datetime, date
 
 @pytest.fixture
 def db_manager():
@@ -137,7 +137,7 @@ def test_get_transactions_for_current_month(db_manager):
 
     db_manager.add_transaction(telegram_id, "income", 100, "Категория")
 
-    today_str = datetime.date.today().strftime('%Y-%m-%d')
+    today_str = date.today().strftime('%Y-%m-%d')
     transactions = db_manager.get_transactions(telegram_id, period_start_str=today_str, period_end_str=today_str)
     assert len(transactions) >= 1
 
