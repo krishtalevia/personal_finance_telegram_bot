@@ -1,6 +1,6 @@
 import datetime
 from aiogram import Router, types
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command, CommandObject
 
 from model import DatabaseManager
 
@@ -61,7 +61,7 @@ def get_previous_period_reference_date(period_keyword, current_period_start_date
     return None
 
 @router.message(Command('statistics'))
-async def statistics_handler(message: types.Message):
+async def statistics_handler(message: types.Message, command: CommandObject):
     telegram_id = message.from_user.id
 
     user = db_manager.get_user(telegram_id)
@@ -73,7 +73,7 @@ async def statistics_handler(message: types.Message):
         await message.answer('❌ Вы не авторизованы. Используйте команду /login для авторизации.')
         return
     
-    args_str = message.get_args()
+    args_str = command.args
     args_list = args_str.split() if args_str else []
 
     current_period_keyword = "month" 
