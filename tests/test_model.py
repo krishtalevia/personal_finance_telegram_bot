@@ -64,3 +64,14 @@ def test_add_expense_transaction(db_manager):
     
     result = db_manager.add_transaction(telegram_id, 'expense', 30.50, category_name)
     assert result is True
+
+# Тестовый случай 2.3: Просмотр истории транзакций по несуществующей категории.
+def test_view_transactions_non_existing_category(db_manager):
+    telegram_id = 12345
+    db_manager.register_user(telegram_id)
+
+    db_manager.add_transaction(telegram_id, 'expense', 100, "Существующая Категория")
+
+    transactions = db_manager.get_transactions(telegram_id, category_name_filter="Несуществующая Категория")
+    assert isinstance(transactions, list)
+    assert len(transactions) == 0
