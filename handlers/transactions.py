@@ -1,6 +1,7 @@
 import datetime
 from aiogram import Router, types
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import Command, CommandObject
+
 
 from model import DatabaseManager
 
@@ -33,7 +34,7 @@ def get_date_range_for_period(period_keyword):
     return None, None
 
 @router.message(Command('view_transactions'))
-async def view_transactions_handler(message: types.Message):
+async def view_transactions_handler(message: types.Message, command: CommandObject):
     telegram_id = message.from_user.id
 
     user = db_manager.get_user(telegram_id)
@@ -45,7 +46,7 @@ async def view_transactions_handler(message: types.Message):
         await message.answer('❌ Вы не авторизованы. Используйте команду /login для авторизации.')
         return
     
-    args_str = message.get_args()
+    args_str = command.args
     args_list = args_str.split() if args_str else []
 
     period_start_str = None
