@@ -126,4 +126,11 @@ async def statistics_handler(message: types.Message):
         if total_income == 0 and transactions:
             response_lines.append("\n📉 Доходов за период не было.")
 
+    if not transactions:
+        response_lines.append("\n🤷 Транзакций за указанный период не найдено.")
+        response_lines = [
+            f"📊 Статистика за период: {period_display_name} ({period_start_str} - {period_end_str})\n",
+            "🤷 Транзакций за указанный период не найдено."
+        ]
+
     await message.answer("\n".join(response_lines))
