@@ -28,7 +28,7 @@ def test_register_existing_user(db_manager):
 
 # Тестовый случай 1.2: Успешная регистрация нового пользователя.
 def test_register_new_user(db_manager):
-    telegram_id = 11111
+    telegram_id = 12345
     
     result = db_manager.register_user(telegram_id)
     assert result is True
@@ -40,7 +40,7 @@ def test_register_new_user(db_manager):
 
 # Тестовый случай 1.3: Авторизация с правильными учетными данными (зарегистрированного пользователя).
 def test_authorize_registered_user(db_manager):
-    telegram_id = 22222
+    telegram_id = 12345
     db_manager.register_user(telegram_id)
 
     result = db_manager.authorize_user(telegram_id)
@@ -50,7 +50,17 @@ def test_authorize_registered_user(db_manager):
 
 # Тестовый случай 1.4: Авторизация с неправильными учетными данными (незарегистрированного пользователя).
 def test_authorize_non_existing_user(db_manager):
-    telegram_id = 33333
+    telegram_id = 12345
 
     with pytest.raises(ValueError, match='Пользователь не зарегистрирован.'):
         db_manager.authorize_user(telegram_id)
+
+# Тестовый случай 2.1: Добавление расхода с указанием всех необходимых данных.
+def test_add_expense_transaction(db_manager):
+    telegram_id = 12345
+    db_manager.register_user(telegram_id)
+    
+    category_name = "Еда"
+    
+    result = db_manager.add_transaction(telegram_id, 'expense', 30.50, category_name)
+    assert result is True
