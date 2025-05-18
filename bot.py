@@ -3,7 +3,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 
 from config import TOKEN
-from handlers import auth, start, income, expense, transactions, goals, statistics
+from handlers import auth, start, income, expense, transactions, goals, statistics, help
 from model import init_db
 
 async def main():
@@ -19,6 +19,7 @@ async def main():
     dp.include_routers(transactions.router)
     dp.include_routers(goals.router)
     dp.include_routers(statistics.router)
+    dp.include_routers(help.router)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
