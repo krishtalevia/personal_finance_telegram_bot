@@ -82,33 +82,32 @@ async def statistics_handler(message: types.Message):
     if args_list:
         potential_period_arg = args_list[0].lower()
         if potential_period_arg in PERIODS:
-            period_keyword_from_user = PERIODS[potential_period_arg]
+            current_period_keyword = PERIODS[potential_period_arg]
             for display, keyword_val in PERIODS.items():
-                if keyword_val == period_keyword_from_user:
-                    period_display_name = display.capitalize()
+                if keyword_val == current_period_keyword:
+                    current_period_display_name = display.capitalize()
                     break
 
-    period_start_str, period_end_str = get_date_range_for_period(period_keyword_from_user)
+    current_period_start_str, current_period_end_str = get_date_range_for_period(current_period_keyword, today_date)
 
-    if not period_start_str or not period_end_str:
-        await message.answer("⚠️ Не удалось определить период для статистики.")
+    if not current_period_start_str or not current_period_end_str:
+        await message.answer("⚠️ Не удалось определить текущий период для статистики.")
         return
     
     try:
-        transactions = db_manager.get_transactions(
+        current_transactions = db_manager.get_transactions(
             telegram_id, 
-            period_start_str=period_start_str, 
-            period_end_str=period_end_str
+            period_start_str=current_period_start_str, 
+            period_end_str=current_period_end_str
         )
-
     except Exception as e:
-        await message.answer("❌ Произошла ошибка при получении транзакций для статистики.")
+        await message.answer("❌ Произошла ошибка при получении транзакций (текущий период).")
         return
     
-    total_income = 0.0
-    total_expense = 0.0
-    incomes_by_category = {}
-    expenses_by_category = {} 
+    current_total_income = 0.0
+    current_total_expense = 0.0
+    current_incomes_by_category = {} 
+    current_expenses_by_category = {} 
 
     if transactions:
         for tr in transactions:
