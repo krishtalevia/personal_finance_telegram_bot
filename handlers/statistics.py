@@ -145,11 +145,14 @@ async def statistics_handler(message: types.Message):
                 )
                 if prev_transactions:
                     for tr in prev_transactions:
+                        tr_type, tr_amount, tr_category = tr[1], tr[2], tr[3]
                         tr_type, tr_amount = tr[1], tr[2]
                         if tr_type == 'income':
                             prev_total_income += tr_amount
+                            prev_incomes_by_category[tr_category] = prev_incomes_by_category.get(tr_category, 0) + tr_amount
                         elif tr_type == 'expense':
                             prev_total_expense += tr_amount
+                            prev_expenses_by_category[tr_category] = prev_expenses_by_category.get(tr_category, 0) + tr_amount
             except Exception as e:
                 pass 
 
@@ -160,6 +163,7 @@ async def statistics_handler(message: types.Message):
         f"⚖️ Чистый баланс: {current_net_balance:.2f}"
     ]
 
+    sorted_expenses, sorted_incomes = [], []
     if current_expenses_by_category:
         response_lines.append("\n📈 Структура расходов (текущий период):")
         sorted_expenses = sorted(current_expenses_by_category.items(), key=lambda item: item[1], reverse=True)
@@ -188,7 +192,6 @@ async def statistics_handler(message: types.Message):
             percentage = (amount / current_total_income) * 100 if current_total_income > 0 else 0
             response_lines.append(f"  {i+1}. {category}: {amount:.2f} ({percentage:.1f}%)")
     
-    
     if prev_period_ref_date and previous_period_start_str:
         response_lines.append(f"\n🔄 Тренды (сравнение с предыдущим {current_period_display_name.lower()}):")
         
@@ -208,6 +211,35 @@ async def statistics_handler(message: types.Message):
             expense_change_percent_str = f"{expense_change_percent:+.1f}%"
         response_lines.append(f"  Расходы: {current_total_expense:.2f} (было {prev_total_expense:.2f}, изм: {expense_change:+.2f}, {expense_change_percent_str})")
     
+        all_expense_categories = set(current_expenses_by_category.keys()) | set(prev_expenses_by_category.keys())
+        if all_expense_categories:
+            response_lines.append(f"\n🔍 Сравнение категорий расходов (с предыдущим {current_period_display_name.lower()}):")
+            for category in sorted(list(all_expense_categories)):
+                current_amount = current_expenses_by_category.get(category, 0.0)
+                prev_amount = prev_expenses_by_category.get(category, 0.0)
+                change = current_amount - prev_amount
+                change_percent_str = "-"
+                if prev_amount != 0:
+                    change_percent = (change / prev_amount) * 100
+                    change_percent_str = f"{change_percent:+.1f}%"
+                
+                response_lines.append(f"  - {category}: {current_amount:.2f} (было {prev_amount:.2f}, изм: {change:+.2f}, {change_percent_str})")
+
+        
+        all_income_categories = set(current_incomes_by_category.keys()) | set(prev_incomes_by_category.keys())
+        if all_income_categories:
+            response_lines.append(f"\n🔍 Сравнение категорий доходов (с предыдущим {current_period_display_name.lower()}):")
+            for category in sorted(list(all_income_categories)):
+                current_amount = current_incomes_by_category.get(category, 0.0)
+                prev_amount = prev_incomes_by_category.get(category, 0.0)
+                change = current_amount - prev_amount
+                change_percent_str = "-"
+                if prev_amount != 0:
+                    change_percent = (change / prev_amount) * 100
+                    change_percent_str = f"{change_percent:+.1f}%"
+                response_lines.append(f"  - {category}: {current_amount:.2f} (было {prev_amount:.2f}, изм: {change:+.2f}, {change_percent_str})")
+
+    active_goals = []
     try:
         active_goals = db_manager.get_financial_goals(telegram_id, status='active')
         if active_goals:
