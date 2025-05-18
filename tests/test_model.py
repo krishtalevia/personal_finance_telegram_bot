@@ -95,7 +95,7 @@ def test_set_new_financial_goal(db_manager):
     assert goal[2] == target_amount
     assert goal[3] == 0.0
     assert goal[4] == 'active'
-    
+
 # Тестовый случай 3.2: Просмотр списка установленных целей.
 def test_view_financial_goals(db_manager):
     telegram_id = 12345
@@ -106,3 +106,25 @@ def test_view_financial_goals(db_manager):
 
     goals = db_manager.get_financial_goals(telegram_id)
     assert len(goals) == 2
+
+# Тестовый случай 3.3: Достижение финансовой цели и получение уведомления.
+def test_achieve_financial_goal(db_manager):
+    telegram_id = 12345
+    db_manager.register_user(telegram_id)
+
+    description = "Купить клавиатуру"
+    target_amount = 10000.00
+    db_manager.add_financial_goal(telegram_id, description, target_amount)
+    
+    goals = db_manager.get_financial_goals(telegram_id)
+    goal_id = goals[0][0]
+
+    db_manager.update_goal_parameter(goal_id, telegram_id, 'current_amount', 10000.00)
+    
+    updated_goal = db_manager.get_financial_goal_by_id(goal_id, telegram_id)
+    assert updated_goal is not None
+    assert updated_goal[3] == 10000.00
+
+    db_manager.update_goal_parameter(goal_id, telegram_id, 'status', 'achieved')
+    final_goal = db_manager.get_financial_goal_by_id(goal_id, telegram_id)
+    assert final_goal[4] == 'achieved'
