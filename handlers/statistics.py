@@ -21,6 +21,7 @@ def get_date_range_for_period(period_keyword, reference_date=None):
         current_date = reference_date
         
     period_start = None
+    period_end = None
     
     if period_keyword == "day":
         period_start = current_date
