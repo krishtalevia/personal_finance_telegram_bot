@@ -146,10 +146,11 @@ async def statistics_handler(message: types.Message):
                 if prev_transactions:
                     for tr in prev_transactions:
                         tr_type, tr_amount, tr_category = tr[1], tr[2], tr[3]
-                        tr_type, tr_amount = tr[1], tr[2]
+                        
                         if tr_type == 'income':
                             prev_total_income += tr_amount
                             prev_incomes_by_category[tr_category] = prev_incomes_by_category.get(tr_category, 0) + tr_amount
+                        
                         elif tr_type == 'expense':
                             prev_total_expense += tr_amount
                             prev_expenses_by_category[tr_category] = prev_expenses_by_category.get(tr_category, 0) + tr_amount
