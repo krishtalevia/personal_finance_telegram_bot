@@ -115,4 +115,15 @@ async def statistics_handler(message: types.Message):
         if total_expense == 0 and transactions:
              response_lines.append("\n📈 Расходов за период не было.")
 
+    if incomes_by_category:
+        response_lines.append("\n📉 Структура доходов:")
+        
+        sorted_incomes = sorted(incomes_by_category.items(), key=lambda item: item[1], reverse=True)
+        for category, amount in sorted_incomes:
+            percentage = (amount / total_income) * 100 if total_income > 0 else 0
+            response_lines.append(f"  - {category}: {amount:.2f} ({percentage:.1f}%)")
+    else:
+        if total_income == 0 and transactions:
+            response_lines.append("\n📉 Доходов за период не было.")
+
     await message.answer("\n".join(response_lines))
