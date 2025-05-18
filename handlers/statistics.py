@@ -169,6 +169,23 @@ async def statistics_handler(message: types.Message):
             percentage = (amount / current_total_income) * 100 if current_total_income > 0 else 0
             response_lines.append(f"  - {category}: {amount:.2f} ({percentage:.1f}%)")
     
+    if prev_period_ref_date and previous_period_start_str:
+        response_lines.append(f"\n🔄 Тренды (сравнение с предыдущим {current_period_display_name.lower()}):")
+        
+        income_change = current_total_income - prev_total_income
+        income_change_percent_str = "-"
+        if prev_total_income != 0:
+            income_change_percent = (income_change / prev_total_income) * 100
+            income_change_percent_str = f"{income_change_percent:+.1f}%"
+        response_lines.append(f"  Доходы: {current_total_income:.2f} (было {prev_total_income:.2f}, изм: {income_change:+.2f}, {income_change_percent_str})")
+
+        expense_change = current_total_expense - prev_total_expense
+        expense_change_percent_str = "-"
+        if prev_total_expense != 0:
+            expense_change_percent = (expense_change / prev_total_expense) * 100
+            expense_change_percent_str = f"{expense_change_percent:+.1f}%"
+        response_lines.append(f"  Расходы: {current_total_expense:.2f} (было {prev_total_expense:.2f}, изм: {expense_change:+.2f}, {expense_change_percent_str})")
+    
     try:
         active_goals = db_manager.get_financial_goals(telegram_id, status='active')
         if active_goals:
