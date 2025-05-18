@@ -121,6 +121,33 @@ async def statistics_handler(message: types.Message):
     
     current_net_balance = current_total_income - current_total_expense
 
+    current_period_start_date_obj = datetime.datetime.strptime(current_period_start_str, '%Y-%m-%d').date()
+    
+    prev_period_ref_date = get_previous_period_reference_date(current_period_keyword, current_period_start_date_obj)
+    previous_period_start_str, previous_period_end_str = None, None
+    prev_transactions = []
+    prev_total_income = 0.0
+    prev_total_expense = 0.0
+
+    if prev_period_ref_date:
+        previous_period_start_str, previous_period_end_str = get_date_range_for_period(current_period_keyword, prev_period_ref_date)
+        if previous_period_start_str and previous_period_end_str:
+            try:
+                prev_transactions = db_manager.get_transactions(
+                    telegram_id,
+                    period_start_str=previous_period_start_str,
+                    period_end_str=previous_period_end_str
+                )
+                if prev_transactions:
+                    for tr in prev_transactions:
+                        tr_type, tr_amount = tr[1], tr[2]
+                        if tr_type == 'income':
+                            prev_total_income += tr_amount
+                        elif tr_type == 'expense':
+                            prev_total_expense += tr_amount
+            except Exception as e:
+                pass 
+
     response_lines = [
         f"📊 Статистика за период: {period_display_name} ({period_start_str} - {period_end_str})\n",
         f"🟢 Общий доход: {total_income:.2f}",
