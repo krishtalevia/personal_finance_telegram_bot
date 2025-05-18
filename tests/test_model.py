@@ -128,3 +128,14 @@ def test_achieve_financial_goal(db_manager):
     db_manager.update_goal_parameter(goal_id, telegram_id, 'status', 'achieved')
     final_goal = db_manager.get_financial_goal_by_id(goal_id, telegram_id)
     assert final_goal[4] == 'achieved'
+
+# Тестовый случай 4.1: Запрос статистики за текущий месяц.
+def test_get_transactions_for_current_month(db_manager):
+    telegram_id = 12345
+    db_manager.register_user(telegram_id)
+
+    db_manager.add_transaction(telegram_id, "income", 100, "Категория")
+
+    today_str = datetime.date.today().strftime('%Y-%m-%d')
+    transactions = db_manager.get_transactions(telegram_id, period_start_str=today_str, period_end_str=today_str)
+    assert len(transactions) >= 1
