@@ -47,3 +47,10 @@ def test_authorize_registered_user(db_manager):
     assert result is True
 
     assert db_manager.is_user_authorized(telegram_id) is True
+
+# Тестовый случай 1.4: Авторизация с неправильными учетными данными (незарегистрированного пользователя).
+def test_authorize_non_existing_user(db_manager):
+    telegram_id = 33333
+
+    with pytest.raises(ValueError, match='Пользователь не зарегистрирован.'):
+        db_manager.authorize_user(telegram_id)
