@@ -94,6 +94,7 @@ async def statistics_handler(message: types.Message):
         await message.answer("⚠️ Не удалось определить текущий период для статистики.")
         return
     
+    current_transactions = []
     try:
         current_transactions = db_manager.get_transactions(
             telegram_id, 
@@ -112,9 +113,11 @@ async def statistics_handler(message: types.Message):
     if current_transactions:
         for tr in current_transactions:
             tr_type, tr_amount, tr_category = tr[1], tr[2], tr[3]
+            
             if tr_type == 'income':
                 current_total_income += tr_amount
                 current_incomes_by_category[tr_category] = current_incomes_by_category.get(tr_category, 0) + tr_amount
+            
             elif tr_type == 'expense':
                 current_total_expense += tr_amount
                 current_expenses_by_category[tr_category] = current_expenses_by_category.get(tr_category, 0) + tr_amount
@@ -122,12 +125,14 @@ async def statistics_handler(message: types.Message):
     current_net_balance = current_total_income - current_total_expense
 
     current_period_start_date_obj = datetime.datetime.strptime(current_period_start_str, '%Y-%m-%d').date()
-    
     prev_period_ref_date = get_previous_period_reference_date(current_period_keyword, current_period_start_date_obj)
+    
     previous_period_start_str, previous_period_end_str = None, None
     prev_transactions = []
     prev_total_income = 0.0
     prev_total_expense = 0.0
+    prev_incomes_by_category = {}
+    prev_expenses_by_category = {}
 
     if prev_period_ref_date:
         previous_period_start_str, previous_period_end_str = get_date_range_for_period(current_period_keyword, prev_period_ref_date)
