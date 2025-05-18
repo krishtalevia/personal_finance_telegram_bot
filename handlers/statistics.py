@@ -51,12 +51,12 @@ def get_previous_period_reference_date(period_keyword, current_period_start_date
         return current_period_start_date - datetime.timedelta(weeks=1)
     
     elif period_keyword == "month":
-
-        prev_month_approx = current_period_start_date - datetime.timedelta(days=5) # مثلا
-        return prev_month_approx.replace(day=1)
+        first_day_current_month = current_period_start_date.replace(day=1)
+        last_day_prev_month = first_day_current_month - datetime.timedelta(days=1)
+        return last_day_prev_month
     
     elif period_keyword == "year":
-        return current_period_start_date.replace(year=current_period_start_date.year - 1)
+        return current_period_start_date.replace(year=current_period_start_date.year - 1, month=1, day=1)
     return None
 
 @router.message(Command('statistics'))
@@ -177,7 +177,7 @@ async def statistics_handler(message: types.Message):
             percentage = (amount / current_total_expense) * 100 if current_total_expense > 0 else 0
             response_lines.append(f"  {i+1}. {category}: {amount:.2f} ({percentage:.1f}%)")
     
-    if sorted_incomes: # sorted_incomes уже отсортирован по убыванию
+    if sorted_incomes:
         response_lines.append(f"\n💰 Топ-{3} категории доходов:")
         for i, (category, amount) in enumerate(sorted_incomes[:3]):
             percentage = (amount / current_total_income) * 100 if current_total_income > 0 else 0
