@@ -32,8 +32,8 @@ def get_date_range_for_period(period_keyword, reference_date=None):
     
     elif period_keyword == "month":
         period_start = current_date.replace(day=1)
-        next_month = period_start.replace(day=28) + datetime.timedelta(days=4)
-        period_end = next_month - datetime.timedelta(days=next_month.day)
+        next_month_start = (period_start.replace(day=28) + datetime.timedelta(days=4)).replace(day=1)
+        period_end = next_month_start - datetime.timedelta(days=1)
     
     elif period_keyword == "year":
         period_start = current_date.replace(month=1, day=1)
