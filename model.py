@@ -251,3 +251,8 @@ class DatabaseManager:
         )
         self.connection.commit()
         return True
+    
+    def close(self):
+        if self.connection:
+            self.connection.close()
+            self.connection = None
