@@ -88,3 +88,7 @@ async def help_handler(message: types.Message, command: CommandObject):
             "/statistics год - статистика за текущий год."
         )
         await message.answer(help_text)
+
+    else:
+        await message.answer(f"⚠️ Неизвестный аргумент для команды /help: {args}\n"
+                             f"Используйте /help без аргументов для просмотра списка команд.")
