@@ -149,41 +149,26 @@ async def statistics_handler(message: types.Message):
                 pass 
 
     response_lines = [
-        f"📊 Статистика за период: {period_display_name} ({period_start_str} - {period_end_str})\n",
-        f"🟢 Общий доход: {total_income:.2f}",
-        f"🔴 Общий расход: {total_expense:.2f}",
-        f"⚖️ Чистый баланс: {net_balance:.2f}"
+        f"📊 Статистика за период: {current_period_display_name} ({current_period_start_str} - {current_period_end_str})\n",
+        f"🟢 Общий доход: {current_total_income:.2f}",
+        f"🔴 Общий расход: {current_total_expense:.2f}",
+        f"⚖️ Чистый баланс: {current_net_balance:.2f}"
     ]
 
-    if expenses_by_category:
-        response_lines.append("\n📈 Структура расходов:")
-        
-        sorted_expenses = sorted(expenses_by_category.items(), key=lambda item: item[1], reverse=True)
+    if current_expenses_by_category:
+        response_lines.append("\n📈 Структура расходов (текущий период):")
+        sorted_expenses = sorted(current_expenses_by_category.items(), key=lambda item: item[1], reverse=True)
         for category, amount in sorted_expenses:
-            percentage = (amount / total_expense) * 100 if total_expense > 0 else 0
+            percentage = (amount / current_total_expense) * 100 if current_total_expense > 0 else 0
             response_lines.append(f"  - {category}: {amount:.2f} ({percentage:.1f}%)")
-    else:
-        if total_expense == 0 and transactions:
-             response_lines.append("\n📈 Расходов за период не было.")
 
-    if incomes_by_category:
-        response_lines.append("\n📉 Структура доходов:")
-        
-        sorted_incomes = sorted(incomes_by_category.items(), key=lambda item: item[1], reverse=True)
+    if current_incomes_by_category:
+        response_lines.append("\n📉 Структура доходов (текущий период):")
+        sorted_incomes = sorted(current_incomes_by_category.items(), key=lambda item: item[1], reverse=True)
         for category, amount in sorted_incomes:
-            percentage = (amount / total_income) * 100 if total_income > 0 else 0
+            percentage = (amount / current_total_income) * 100 if current_total_income > 0 else 0
             response_lines.append(f"  - {category}: {amount:.2f} ({percentage:.1f}%)")
-    else:
-        if total_income == 0 and transactions:
-            response_lines.append("\n📉 Доходов за период не было.")
-
-    if not transactions:
-        response_lines.append("\n🤷 Транзакций за указанный период не найдено.")
-        response_lines = [
-            f"📊 Статистика за период: {period_display_name} ({period_start_str} - {period_end_str})\n",
-            "🤷 Транзакций за указанный период не найдено."
-        ]
-
+    
     try:
         active_goals = db_manager.get_financial_goals(telegram_id, status='active')
         if active_goals:
