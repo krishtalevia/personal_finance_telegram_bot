@@ -158,6 +158,7 @@ async def statistics_handler(message: types.Message):
     if current_expenses_by_category:
         response_lines.append("\n📈 Структура расходов (текущий период):")
         sorted_expenses = sorted(current_expenses_by_category.items(), key=lambda item: item[1], reverse=True)
+        
         for category, amount in sorted_expenses:
             percentage = (amount / current_total_expense) * 100 if current_total_expense > 0 else 0
             response_lines.append(f"  - {category}: {amount:.2f} ({percentage:.1f}%)")
@@ -165,6 +166,7 @@ async def statistics_handler(message: types.Message):
     if current_incomes_by_category:
         response_lines.append("\n📉 Структура доходов (текущий период):")
         sorted_incomes = sorted(current_incomes_by_category.items(), key=lambda item: item[1], reverse=True)
+        
         for category, amount in sorted_incomes:
             percentage = (amount / current_total_income) * 100 if current_total_income > 0 else 0
             response_lines.append(f"  - {category}: {amount:.2f} ({percentage:.1f}%)")
@@ -174,6 +176,7 @@ async def statistics_handler(message: types.Message):
         
         income_change = current_total_income - prev_total_income
         income_change_percent_str = "-"
+        
         if prev_total_income != 0:
             income_change_percent = (income_change / prev_total_income) * 100
             income_change_percent_str = f"{income_change_percent:+.1f}%"
@@ -181,6 +184,7 @@ async def statistics_handler(message: types.Message):
 
         expense_change = current_total_expense - prev_total_expense
         expense_change_percent_str = "-"
+        
         if prev_total_expense != 0:
             expense_change_percent = (expense_change / prev_total_expense) * 100
             expense_change_percent_str = f"{expense_change_percent:+.1f}%"
@@ -212,5 +216,4 @@ async def statistics_handler(message: types.Message):
     except Exception as e_goals:
         response_lines.append("\n⚠️ Не удалось загрузить информацию о финансовых целях.")
 
-    
     await message.answer("\n".join(response_lines))
