@@ -75,8 +75,9 @@ async def statistics_handler(message: types.Message):
     args_str = message.get_args()
     args_list = args_str.split() if args_str else []
 
-    period_keyword_from_user = "month"
-    period_display_name = "Текущий месяц"
+    current_period_keyword = "month" 
+    current_period_display_name = "Текущий месяц" 
+    today_date = datetime.date.today()
 
     if args_list:
         potential_period_arg = args_list[0].lower()
