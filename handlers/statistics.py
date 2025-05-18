@@ -43,6 +43,22 @@ def get_date_range_for_period(period_keyword, reference_date=None):
         return period_start.strftime('%Y-%m-%d'), period_end.strftime('%Y-%m-%d')
     return None, None
 
+def get_previous_period_reference_date(period_keyword, current_period_start_date):
+    if period_keyword == "day":
+        return current_period_start_date - datetime.timedelta(days=1)
+    
+    elif period_keyword == "week":
+        return current_period_start_date - datetime.timedelta(weeks=1)
+    
+    elif period_keyword == "month":
+
+        prev_month_approx = current_period_start_date - datetime.timedelta(days=5) # مثلا
+        return prev_month_approx.replace(day=1)
+    
+    elif period_keyword == "year":
+        return current_period_start_date.replace(year=current_period_start_date.year - 1)
+    return None
+
 @router.message(Command('statistics'))
 async def statistics_handler(message: types.Message):
     telegram_id = message.from_user.id
