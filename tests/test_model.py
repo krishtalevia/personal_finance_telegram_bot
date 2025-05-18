@@ -95,3 +95,14 @@ def test_set_new_financial_goal(db_manager):
     assert goal[2] == target_amount
     assert goal[3] == 0.0
     assert goal[4] == 'active'
+    
+# Тестовый случай 3.2: Просмотр списка установленных целей.
+def test_view_financial_goals(db_manager):
+    telegram_id = 12345
+    db_manager.register_user(telegram_id)
+
+    db_manager.add_financial_goal(telegram_id, "Цель 1", 5000)
+    db_manager.add_financial_goal(telegram_id, "Цель 2", 10000)
+
+    goals = db_manager.get_financial_goals(telegram_id)
+    assert len(goals) == 2
