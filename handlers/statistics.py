@@ -170,6 +170,19 @@ async def statistics_handler(message: types.Message):
         for category, amount in sorted_incomes:
             percentage = (amount / current_total_income) * 100 if current_total_income > 0 else 0
             response_lines.append(f"  - {category}: {amount:.2f} ({percentage:.1f}%)")
+
+    if sorted_expenses:
+        response_lines.append(f"\n🏆 Топ-{3} категории расходов:")
+        for i, (category, amount) in enumerate(sorted_expenses[:3]):
+            percentage = (amount / current_total_expense) * 100 if current_total_expense > 0 else 0
+            response_lines.append(f"  {i+1}. {category}: {amount:.2f} ({percentage:.1f}%)")
+    
+    if sorted_incomes: # sorted_incomes уже отсортирован по убыванию
+        response_lines.append(f"\n💰 Топ-{3} категории доходов:")
+        for i, (category, amount) in enumerate(sorted_incomes[:3]):
+            percentage = (amount / current_total_income) * 100 if current_total_income > 0 else 0
+            response_lines.append(f"  {i+1}. {category}: {amount:.2f} ({percentage:.1f}%)")
+    
     
     if prev_period_ref_date and previous_period_start_str:
         response_lines.append(f"\n🔄 Тренды (сравнение с предыдущим {current_period_display_name.lower()}):")
