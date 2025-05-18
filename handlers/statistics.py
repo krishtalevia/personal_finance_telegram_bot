@@ -79,16 +79,21 @@ async def statistics_handler(message: types.Message):
     
     total_income = 0.0
     total_expense = 0.0
+    incomes_by_category = {}
+    expenses_by_category = {} 
 
     if transactions:
         for tr in transactions:
             tr_type = tr[1] 
             tr_amount = tr[2]
+            tr_category = tr[3]
             
             if tr_type == 'income':
                 total_income += tr_amount
+                incomes_by_category[tr_category] = incomes_by_category.get(tr_category, 0) + tr_amount
             elif tr_type == 'expense':
                 total_expense += tr_amount
+                expenses_by_category[tr_category] = expenses_by_category.get(tr_category, 0) + tr_amount
     
     net_balance = total_income - total_expense
 
@@ -98,5 +103,16 @@ async def statistics_handler(message: types.Message):
         f"🔴 Общий расход: {total_expense:.2f}",
         f"⚖️ Чистый баланс: {net_balance:.2f}"
     ]
+
+    if expenses_by_category:
+        response_lines.append("\n📈 Структура расходов:")
+        
+        sorted_expenses = sorted(expenses_by_category.items(), key=lambda item: item[1], reverse=True)
+        for category, amount in sorted_expenses:
+            percentage = (amount / total_expense) * 100 if total_expense > 0 else 0
+            response_lines.append(f"  - {category}: {amount:.2f} ({percentage:.1f}%)")
+    else:
+        if total_expense == 0 and transactions:
+             response_lines.append("\n📈 Расходов за период не было.")
 
     await message.answer("\n".join(response_lines))
