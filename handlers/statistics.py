@@ -262,8 +262,8 @@ async def statistics_handler(message: types.Message):
                 if goal_current >= goal_target:
                     line += " ✅ Цель достигнута!"
                 response_lines.append(line)
-            else: 
-                response_lines.append("\n🎯 Активных финансовых целей нет.")
+        else: 
+            response_lines.append("\n🎯 Активных финансовых целей нет.")
 
     except Exception as e_goals:
         response_lines.append("\n⚠️ Не удалось загрузить информацию о финансовых целях.")
