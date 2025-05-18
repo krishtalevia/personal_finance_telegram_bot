@@ -109,20 +109,17 @@ async def statistics_handler(message: types.Message):
     current_incomes_by_category = {} 
     current_expenses_by_category = {} 
 
-    if transactions:
-        for tr in transactions:
-            tr_type = tr[1] 
-            tr_amount = tr[2]
-            tr_category = tr[3]
-            
+    if current_transactions:
+        for tr in current_transactions:
+            tr_type, tr_amount, tr_category = tr[1], tr[2], tr[3]
             if tr_type == 'income':
-                total_income += tr_amount
-                incomes_by_category[tr_category] = incomes_by_category.get(tr_category, 0) + tr_amount
+                current_total_income += tr_amount
+                current_incomes_by_category[tr_category] = current_incomes_by_category.get(tr_category, 0) + tr_amount
             elif tr_type == 'expense':
-                total_expense += tr_amount
-                expenses_by_category[tr_category] = expenses_by_category.get(tr_category, 0) + tr_amount
+                current_total_expense += tr_amount
+                current_expenses_by_category[tr_category] = current_expenses_by_category.get(tr_category, 0) + tr_amount
     
-    net_balance = total_income - total_expense
+    current_net_balance = current_total_income - current_total_expense
 
     response_lines = [
         f"📊 Статистика за период: {period_display_name} ({period_start_str} - {period_end_str})\n",
