@@ -14,21 +14,32 @@ PERIODS = {
     "год": "year",
 }
 
-def get_date_range_for_period(period_keyword):
-    today = datetime.date.today()
+def get_date_range_for_period(period_keyword, reference_date=None):
+    if reference_date is None:
+        current_date = datetime.date.today()
+    else:
+        current_date = reference_date
+        
     period_start = None
-    period_end = today
-
-    if period_keyword == "day":
-        period_start = today
-    elif period_keyword == "week":
-        period_start = today - datetime.timedelta(days=today.weekday())
-    elif period_keyword == "month":
-        period_start = today.replace(day=1)
-    elif period_keyword == "year":
-        period_start = today.replace(month=1, day=1)
     
-    if period_start:
+    if period_keyword == "day":
+        period_start = current_date
+        period_end = current_date
+    
+    elif period_keyword == "week":
+        period_start = current_date - datetime.timedelta(days=current_date.weekday())
+        period_end = period_start + datetime.timedelta(days=6)
+    
+    elif period_keyword == "month":
+        period_start = current_date.replace(day=1)
+        next_month = period_start.replace(day=28) + datetime.timedelta(days=4)
+        period_end = next_month - datetime.timedelta(days=next_month.day)
+    
+    elif period_keyword == "year":
+        period_start = current_date.replace(month=1, day=1)
+        period_end = current_date.replace(month=12, day=31)
+    
+    if period_start and period_end:
         return period_start.strftime('%Y-%m-%d'), period_end.strftime('%Y-%m-%d')
     return None, None
 
